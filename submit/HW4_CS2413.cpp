@@ -319,7 +319,7 @@ int List::Remove(int idx){
 		//If removing node 1 set, head to equal curr next 
 		else head = curr->Get_Pnext();
 
-		//Delete data at curr
+		//Delete data at head
 		delete curr;
 
 		//Removal is sucessful
@@ -349,16 +349,14 @@ void List::Reverse(){
 	head = prev;
 }
 
-// Clear function
+// Clear function removes all nodes from 
+// the list (so it becomes an empty list). 
 void List::Clear(){
 	Node* next = nullptr;
 
 	while(head != NULL){
-		//store next node
 		next = head->Get_Pnext();
-		//delete current head
 		delete head;
-		//update head
 		head = next;
 	}
 }
