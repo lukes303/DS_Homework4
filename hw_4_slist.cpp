@@ -171,40 +171,195 @@ void List::PrtSID() {
 	}
 }
 
-// Create function creates a singly linked 
-// list based on our inputs and assigns its 
-// head node's address to the "head" pointer. 
-// 
-// To be specific, when we run Create(), 
-// the program should wait for us to input 
-// the SID and GPA of an arbitrary number 
-// of students. After Create() is done,  
-// the linked list should have been created
-// and accessible through "head". 
-// 
-// The format of input should be as follows: 
-// 
-// sid_1 gpa_1 sid_2 gpa_2 sid_3 gpa_3 ...... 
-// 
-// Here, sid_i and gpa_i are SID and GPA of 
-// the i_th input student. A new node is always 
-// added to the head of the list. 
-// 
-// Note that this hw does not require you to 
-// check duplication of the input/inserted SID's 
-// for simplicity. But we should always assume 
-// SID is unique for each student.
-// 
-// Finally, the process should terminate when 
-// an invalid input is given. Note that it is 
-// assumed we always input a pair of valid 
-// sid and gpa for a new student, so there is 
-// no need to deal with the case of a valid sid 
-// followed by an invalid gpa. 
-// 
-// If you are still confused about this function, 
-// check how it is used in the main program. 
+//Create function
+void List::Create(){
 
+	//Variables for holding input data
+	int sid;
+	float gpa;
+
+	//Bool for detecting first node to add
+	bool isFirst = true;
+
+	//Dynamically allocate new list
+	List* studentList = new List();
+
+	//prev points to address of previous node
+	Node* prev = nullptr;
+
+	//Loop continues along as valid inputs are made
+	while(cin >> sid >> gpa){
+		
+		//Dynamically allocate new student node pointer
+		Node* studentNode = new Node();
+
+		//Set data for new student node pointer
+		studentNode->Set_SID(sid);
+		studentNode->Set_GPA(gpa);
+
+		//Set the head of list to the current student node
+		head = studentNode;
+
+		//If this is the first node, update isFirst
+		if(isFirst) isFirst = false;
+		
+		//If this is not the first node, set the next of head to the previous node pointed at by temp
+		else head->Set_Pnext(prev);
+
+		prev = head;
+	}
+}
+
+//Size function
+int List::Lsize(){
+	
+	//int for holding size
+	int size = 0;
+
+	//Node pointer for keep track of current node
+	Node* curr = head;
+	
+	//Traverse through list and count nodes
+	while(curr != NULL){
+		size++;
+		curr = curr->Get_Pnext();
+	}
+	
+	//return result
+	return size;
+}
+
+//Find function
+Node* List::Find(int key){
+
+	//Node pointer for keep track of current node
+	Node* curr = head;
+	
+	//Traverse through list
+	while(curr != NULL){
+		//Return head if id equals key
+		if(curr->Get_SID() == key){
+			return curr;
+		}
+
+		curr = curr->Get_Pnext();
+	}
+
+	return NULL;
+}
+
+//Insert function 
+int List::Insert(Node* p, int idx){
+
+	int size = Lsize();
+	int currentIdx = 1;
+	bool isFirst = true;
+
+	Node* prev = nullptr;
+	Node* curr = head;
+
+
+	//Return -1 if idx is out of range
+	if(idx < 1 || idx > size + 1) return -1;
+
+	else{
+
+		//Traverse through list
+		while(currentIdx < idx){
+			//store current head as previous for next cycle
+			prev = curr;
+			//advance head to next node
+			curr = curr->Get_Pnext();
+			//increment currentIdx
+			currentIdx++;
+			
+			if(isFirst) isFirst = false;
+		}
+		
+		//head should be where p should be inserted now
+		//set previous node next to p if p is not being inserted at 1
+		if(!isFirst) prev->Set_Pnext(p);
+		//set p next to curr
+		p->Set_Pnext(curr);
+
+		//Insertion is sucessful
+		return 1;
+	}
+}
+
+// Remove function
+int List::Remove(int idx){
+	int size = Lsize();
+	int currentIdx = 1;
+	bool isFirst = true;
+
+	Node* prev = nullptr;
+	Node* curr = head;
+
+	//Return -1 if idx is out of range
+	if(idx < 1 || idx > size + 1) return -1;
+
+	else{
+
+		//Traverse through list
+		while(currentIdx < idx){
+			//store current head as previous for next cycle
+			prev = curr;
+			//advance head to next node
+			curr = curr->Get_Pnext();
+			//increment currentIdx
+			currentIdx++;
+			
+			if(isFirst) isFirst = false;
+		}
+		
+		//head should be where node should be removed now
+		//set previous node next to the next of head if not removing node 1
+		if(!isFirst) prev->Set_Pnext(curr->Get_Pnext());
+		//If removing node 1 set, head to equal curr next 
+		else head = curr->Get_Pnext();
+
+		//Delete data at head
+		delete curr;
+
+		//Removal is sucessful
+		return 1;
+	}
+}
+
+// Reverse function
+void List::Reverse(){
+
+	Node* curr = head;
+	Node* prev = nullptr;
+	Node* next;
+
+	while(curr != NULL){
+		//Store the next node
+		next = curr->Get_Pnext();
+		//set current node's next to prev
+		curr->Set_Pnext(prev);
+		//update-
+		//prev to curr node,
+		prev = curr;
+		//curr to next
+		curr = next;
+	}
+	//prev is new head
+	head = prev;
+}
+
+// Clear function removes all nodes from 
+// the list (so it becomes an empty list). 
+void List::Clear(){
+	Node* next = nullptr;
+
+	while(head != NULL){
+		next = head->Get_Pnext();
+		delete head;
+		head = next;
+	}
+}
 
 int main()
 {
